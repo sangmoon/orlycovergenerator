@@ -9,6 +9,10 @@
 		</table>
 		<input type="submit" value="Generate ORLY">
 	</form>
+
+
+	{% if form.get_params %}
+		<image src=	"{% url 'cover:image_generator' %}?{{form.get_params}}" />
+	{% endif %}
 	
-	<image src='/cover/image.jpg' />
 {% endblock %}

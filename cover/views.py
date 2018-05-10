@@ -1,6 +1,6 @@
 from django.conf import settings
-from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.shortcuts import render
 from .forms import CoverForm
 from PIL import Image, ImageFont, ImageDraw
 from .utils import COLOR_CODES
@@ -31,19 +31,31 @@ def image_generator(request):
     animal_path = settings.ROOT('assets', 'animal', '{}.png'.format(animal_code))
     animal_im = Image.open(animal_path)
 
+    animal_im = animal_im.resize((400, 400))
+
     color = COLOR_CODES[color_idx]
 
-    canvas_im = Image.new('RGB', (500, 700), color)
-    canvas_im.paste(animal_im, (0, 0))  # left, top
+    canvas_im = Image.new('RGB', (500, 700), "white")
+    canvas_im.paste(animal_im, (50, 40))  # left, top
 
     ttf_path = settings.ROOT('assets', 'fonts', 'NanumGothicCoding.ttf')
     # 여기서 데이터를 받아서 그리겠습니다.
-    fnt = ImageFont.truetype(ttf_path, 40)
-    d = ImageDraw.Draw(canvas_im)
+    draw = ImageDraw.Draw(canvas_im)
 
-    d.text((10, 10), title, font=fnt, fill=(0, 255, 0, 128))
-    d.text((10, 60), top_text, font=fnt, fill=(0, 255, 0, 255))
-    d.text((10, 100), author, font=fnt, fill=(0, 255, 0, 255))
+    draw.rectangle((20, 0, 480, 8), fill=color)
+    draw.rectangle((10, 400, 480, 510), fill=color)
+
+    fnt = ImageFont.truetype(ttf_path, 70)
+    draw.text((45, 430), title, font=fnt, fill=(255, 255, 255, 255))
+
+    fnt = ImageFont.truetype(ttf_path, 20)
+    draw.text((160, 15), top_text, font=fnt, fill=(0, 0, 0, 255))
+
+    fnt = ImageFont.truetype(ttf_path, 30)
+    draw.text((125, 510), guide_text, font=fnt, fill=(0, 0, 0, 255))
+
+    fnt = ImageFont.truetype(ttf_path, 25)
+    draw.text((360, 655), author, font=fnt, fill=(0, 0, 0, 255))
 
     response = HttpResponse(content_type='image/png')  # file-like
     canvas_im.save(response, format='png')

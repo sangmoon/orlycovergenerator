@@ -122,5 +122,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    ROOT('static'),
+    ROOT('covergenerator', 'static'),
 ]
